@@ -18,6 +18,12 @@ from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 import requests
 import re
+from fastapi.middleware.cors import CORSMiddleware
+
+origins = [
+    "https://orange-pond-0f526760f.2.azurestaticapps.net",  # your frontend
+    "http://localhost:5173",  # for local dev (vite)
+]
 
 os.environ["OPENAI_API_KEY"] = os.getenv("OPENAI_API_KEY")
 os.environ["OPENWEATHERMAP_API_KEY"] = os.getenv("OPENWEATHERMAP_API_KEY")
@@ -29,7 +35,7 @@ app = FastAPI()  # Your existing FastAPI app
 # Add this immediately after creating `app`
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["https://orange-pond-0f526760f.2.azurestaticapps.net"],
+    allow_origins=origins,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -325,7 +331,11 @@ workflow.add_edge("tool_agent", "llm")
 
 compiled_workflow = workflow.compile()
 
-@app.post("/api/process_preferences/{session_id}")
+@app.get("/")
+async def root():
+    return {"message": "Backend is running"}
+
+@app.post("/process_preferences/{session_id}")
 async def process_preferences(session_id: str, request: PreferencesRequest):
     if (
         not request.preferences_text.strip()
