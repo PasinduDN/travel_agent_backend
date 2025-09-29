@@ -35,7 +35,9 @@ app = FastAPI()  # Your existing FastAPI app
 # Add this immediately after creating `app`
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=origins,
+    allow_origins=[
+        "https://orange-pond-0f526760f.2.azurestaticapps.net"
+    ],  # exact domain, no trailing slash
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
